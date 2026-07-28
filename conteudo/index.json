@@ -1,0 +1,80 @@
+{
+  "versao": 1,
+  "total": 12,
+  "primeira_sessao": "2026-02-24",
+  "ultima_sessao": "2026-07-14",
+  "sessoes": [
+    {
+      "id": "2026-02-24-uma-nova-manha",
+      "data": "2026-02-24",
+      "titulo": "Uma Nova Manhã",
+      "arquivo": "conteudo/sessoes/Diário - 2026-02-24 - Uma Nova Manhã.md"
+    },
+    {
+      "id": "2026-03-10-chegada-em-daggerford",
+      "data": "2026-03-10",
+      "titulo": "Chegada em Daggerford",
+      "arquivo": "conteudo/sessoes/Diário - 2026-03-10 - Chegada em Daggerford.md"
+    },
+    {
+      "id": "2026-03-24-saida-para-o-vale-do-riso",
+      "data": "2026-03-24",
+      "titulo": "Saída para o Vale do Riso",
+      "arquivo": "conteudo/sessoes/Diário - 2026-03-24 - Saída para o Vale do Riso.md"
+    },
+    {
+      "id": "2026-03-29-exploracao-do-vale-do-riso",
+      "data": "2026-03-29",
+      "titulo": "Exploração do Vale do Riso",
+      "arquivo": "conteudo/sessoes/Diário - 2026-03-29 - Exploração do Vale do Riso.md"
+    },
+    {
+      "id": "2026-04-07-subida-no-monte-illefarn",
+      "data": "2026-04-07",
+      "titulo": "Subida no Monte Illefarn",
+      "arquivo": "conteudo/sessoes/Diário - 2026-04-07 - Subida no Monte Illefarn.md"
+    },
+    {
+      "id": "2026-05-05-exorcismo-do-dragao-delimbiyr",
+      "data": "2026-05-05",
+      "titulo": "Exorcismo do Dragão Delimbiyr",
+      "arquivo": "conteudo/sessoes/Diário - 2026-05-05 - Exorcismo do Dragão Delimbiyr.md"
+    },
+    {
+      "id": "2026-05-19-descida-para-umbreterra",
+      "data": "2026-05-19",
+      "titulo": "Descida para Umbreterra",
+      "arquivo": "conteudo/sessoes/Diário - 2026-05-19 - Descida para Umbreterra.md"
+    },
+    {
+      "id": "2026-06-02-inicio-da-exploracao-de-umbreterra",
+      "data": "2026-06-02",
+      "titulo": "Início da Exploração de Umbreterra",
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-02 - Início da Exploração de Umbreterra.md"
+    },
+    {
+      "id": "2026-06-16-vilarejo-de-shar",
+      "data": "2026-06-16",
+      "titulo": "Vilarejo de Shar",
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-16 - Vilarejo de Shar.md"
+    },
+    {
+      "id": "2026-06-20-sessao-presencial-enigma-do-vilarejo-de-shar",
+      "data": "2026-06-20",
+      "titulo": "Sessão Presencial (Enigma do Vilarejo de Shar)",
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-20 - Sessão Presencial (Enigma do Vilarejo de Shar).md"
+    },
+    {
+      "id": "2026-06-30-retorno-ao-vilarejo-de-shar",
+      "data": "2026-06-30",
+      "titulo": "Retorno ao Vilarejo de Shar",
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-30 - Retorno ao Vilarejo de Shar.md"
+    },
+    {
+      "id": "2026-07-14-um-mes-ate-thultanthar",
+      "data": "2026-07-14",
+      "titulo": "Um Mês Até Thultanthar",
+      "arquivo": "conteudo/sessoes/Diário - 2026-07-14 - Um Mês Até Thultanthar.md"
+    }
+  ]
+}
