@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#24160f">
+  <meta
+    name="description"
+    content="Diário dos heróis da campanha Tempos Perturbados."
+  >
+  <title>Diário dos Heróis — Tempos Perturbados</title>
+  <link rel="stylesheet" href="./css/estilo.css">
+</head>
+
+<body>
+  <noscript>
+    <div class="aviso-sem-script">
+      Este diário precisa de JavaScript habilitado para carregar as entradas.
+    </div>
+  </noscript>
+
+  <button
+    class="botao-menu"
+    id="botao-menu"
+    type="button"
+    aria-label="Abrir sumário"
+    aria-controls="sumario"
+    aria-expanded="false"
+  >
+    ☰
+  </button>
+
+  <aside class="sumario" id="sumario" aria-label="Sumário do diário">
+    <div class="sumario__cabecalho">
+      <div>
+        <p class="sumario__sobretitulo">Tempos Perturbados</p>
+        <h1>Diário dos Heróis</h1>
+      </div>
+
+      <button
+        class="sumario__fechar"
+        id="sumario-fechar"
+        type="button"
+        aria-label="Fechar sumário"
+      >
+        ×
+      </button>
+    </div>
+
+    <label class="pesquisa" for="pesquisa-entradas">
+      <span>Pesquisar entradas</span>
+      <input
+        id="pesquisa-entradas"
+        type="search"
+        placeholder="Data ou título..."
+        autocomplete="off"
+      >
+    </label>
+
+    <nav class="lista-entradas" aria-label="Entradas do diário">
+      <ol id="lista-entradas"></ol>
+      <p class="lista-vazia" id="lista-vazia" hidden>
+        Nenhuma entrada encontrada.
+      </p>
+    </nav>
+
+    <footer class="sumario__rodape">
+      <span id="quantidade-entradas">Carregando registros...</span>
+    </footer>
+  </aside>
+
+  <div class="fundo-sumario" id="fundo-sumario" hidden></div>
+
+  <main class="palco">
+    <header class="barra-superior">
+      <div>
+        <p class="barra-superior__rotulo">Crônicas da campanha</p>
+        <h2 id="titulo-atual">O diário permanece fechado</h2>
+      </div>
+
+      <button
+        class="botao-download"
+        id="botao-download"
+        type="button"
+        disabled
+      >
+        <span aria-hidden="true">⇩</span>
+        Baixar página
+      </button>
+    </header>
+
+    <section class="leitor" aria-label="Leitor do diário">
+      <button
+        class="seta seta--esquerda"
+        id="seta-esquerda"
+        type="button"
+        aria-label="Voltar página"
+        disabled
+      >
+        <span aria-hidden="true">‹</span>
+      </button>
+
+      <div class="livro-area">
+        <div
+          class="livro"
+          id="livro"
+          aria-live="polite"
+          aria-label="Diário fechado"
+        >
+          <div class="livro__miolo" aria-hidden="true"></div>
+
+          <div class="abertura">
+            <div class="pagina-fisica pagina-fisica--esquerda"></div>
+            <div class="pagina-fisica pagina-fisica--direita"></div>
+
+            <div class="cabecalho-pagina cabecalho-pagina--esquerda">
+              <span id="cabecalho-esquerdo"></span>
+            </div>
+
+            <div class="cabecalho-pagina cabecalho-pagina--direita">
+              <span id="cabecalho-direito"></span>
+            </div>
+
+            <article class="conteudo-pagina" id="conteudo-pagina"></article>
+
+            <div class="vinco-central" aria-hidden="true"></div>
+            <div class="folha-animada" aria-hidden="true"></div>
+          </div>
+
+          <button
+            class="capa"
+            id="capa"
+            type="button"
+            aria-label="Abrir o diário"
+          >
+            <div class="capa__moldura">
+              <p class="capa__campanha">Tempos Perturbados</p>
+              <h2>Diário<br>dos Heróis</h2>
+              <div class="capa__ornamento" aria-hidden="true">✦</div>
+              <p class="capa__instrucao">Use a seta à direita para abrir</p>
+            </div>
+          </button>
+        </div>
+
+        <div class="estado-leitura" role="status" aria-live="polite">
+          <span id="estado-texto">Preparando o diário...</span>
+          <span id="indicador-pagina"></span>
+        </div>
+      </div>
+
+      <button
+        class="seta seta--direita"
+        id="seta-direita"
+        type="button"
+        aria-label="Avançar página"
+        disabled
+      >
+        <span aria-hidden="true">›</span>
+      </button>
+    </section>
+
+    <p class="atalhos">
+      Use as teclas <kbd>←</kbd> e <kbd>→</kbd> para navegar.
+      <kbd>Esc</kbd> fecha o diário.
+    </p>
+  </main>
+
+  <div class="mensagem-erro" id="mensagem-erro" role="alert" hidden>
+    <strong>Não foi possível carregar o diário.</strong>
+    <span id="mensagem-erro-texto"></span>
+  </div>
+
+  <script src="./js/diario.js" defer></script>
+</body>
+</html>
