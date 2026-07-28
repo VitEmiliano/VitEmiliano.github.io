@@ -2,6 +2,7 @@
 
 const CAMINHO_INDICE = "./conteudo/index.json";
 const DURACAO_VIRADA = 620;
+const MEDIA_MOBILE = "(max-width: 780px)";
 
 const elementos = {
   livro: document.querySelector("#livro"),
@@ -31,6 +32,10 @@ const estado = {
   sessoes: [],
   indiceAtual: -1,
   markdownAtual: "",
+  htmlAtual: "",
+  paginasMobile: [],
+  paginaInternaAtual: 0,
+  modoMobile: window.matchMedia(MEDIA_MOBILE).matches,
   carregando: false,
   animando: false,
   cacheMarkdown: new Map(),
@@ -45,9 +50,7 @@ async function inicializar() {
     const resposta = await fetch(CAMINHO_INDICE, { cache: "no-store" });
 
     if (!resposta.ok) {
-      throw new Error(
-        `O índice respondeu com status ${resposta.status}.`
-      );
+      throw new Error(`O índice respondeu com status ${resposta.status}.`);
     }
 
     const indice = await resposta.json();
@@ -73,6 +76,7 @@ async function inicializar() {
       : "Nenhuma entrada foi publicada.";
 
     atualizarControles();
+    await aguardarFontes();
 
     const idDaUrl = decodeURIComponent(window.location.hash.replace(/^#/, ""));
     const indiceDaUrl = estado.sessoes.findIndex(
@@ -124,17 +128,13 @@ function registrarEventos() {
 
   window.addEventListener("resize", () => {
     clearTimeout(temporizadorRedimensionamento);
-    temporizadorRedimensionamento = setTimeout(() => {
-      if (estado.indiceAtual >= 0) {
-        ajustarDensidadeConteudo();
-      }
-    }, 140);
+    temporizadorRedimensionamento = setTimeout(reconfigurarAposRedimensionamento, 180);
   });
 
   if (document.fonts?.ready) {
     document.fonts.ready.then(() => {
       if (estado.indiceAtual >= 0) {
-        ajustarDensidadeConteudo();
+        reconfigurarConteudoAtual();
       }
     });
   }
@@ -177,7 +177,7 @@ function renderizarSumario() {
     botao.type = "button";
     botao.textContent = `${formatarData(sessao.data)} - ${sessao.titulo}`;
     botao.addEventListener("click", async () => {
-      await abrirSessao(indice);
+      await abrirSessao(indice, undefined, false, 0);
       fecharSumarioMobile();
     });
 
@@ -211,12 +211,20 @@ async function avancar() {
   }
 
   if (estado.indiceAtual < 0) {
-    await abrirSessao(0, "next");
+    await abrirSessao(0, "next", false, 0);
+    return;
+  }
+
+  if (
+    estado.modoMobile &&
+    estado.paginaInternaAtual < estado.paginasMobile.length - 1
+  ) {
+    await virarPaginaInterna(estado.paginaInternaAtual + 1, "next");
     return;
   }
 
   if (estado.indiceAtual < estado.sessoes.length - 1) {
-    await abrirSessao(estado.indiceAtual + 1, "next");
+    await abrirSessao(estado.indiceAtual + 1, "next", false, 0);
   }
 }
 
@@ -225,15 +233,30 @@ async function voltar() {
     return;
   }
 
+  if (estado.modoMobile && estado.paginaInternaAtual > 0) {
+    await virarPaginaInterna(estado.paginaInternaAtual - 1, "previous");
+    return;
+  }
+
   if (estado.indiceAtual === 0) {
     await fecharLivro();
     return;
   }
 
-  await abrirSessao(estado.indiceAtual - 1, "previous");
+  await abrirSessao(
+    estado.indiceAtual - 1,
+    "previous",
+    false,
+    estado.modoMobile ? "last" : 0
+  );
 }
 
-async function abrirSessao(indice, direcao, semAnimacao = false) {
+async function abrirSessao(
+  indice,
+  direcao,
+  semAnimacao = false,
+  paginaAlvo = 0
+) {
   if (
     estado.animando ||
     estado.carregando ||
@@ -254,26 +277,21 @@ async function abrirSessao(indice, direcao, semAnimacao = false) {
     const markdown = await carregarMarkdown(sessao);
     const html = converterMarkdown(markdown);
 
-    if (livroEstavaFechado || semAnimacao) {
-      aplicarSessao(indice, markdown, html);
+    if (livroEstavaFechado) {
       elementos.livro.classList.add("is-open");
       elementos.livro.setAttribute("aria-label", "Diário aberto");
+      await esperarDoisFrames();
+    }
+
+    if (livroEstavaFechado || semAnimacao) {
+      await aplicarSessao(indice, markdown, html, paginaAlvo);
     } else {
       const classeAnimacao =
-        direcao ||
-        (indice > estado.indiceAtual ? "next" : "previous");
+        direcao || (indice > estado.indiceAtual ? "next" : "previous");
 
-      estado.animando = true;
-      elementos.livro.classList.add(
-        classeAnimacao === "previous" ? "turn-previous" : "turn-next"
-      );
-
-      await esperar(DURACAO_VIRADA * 0.46);
-      aplicarSessao(indice, markdown, html);
-      await esperar(DURACAO_VIRADA * 0.54);
-
-      elementos.livro.classList.remove("turn-next", "turn-previous");
-      estado.animando = false;
+      await animarVirada(classeAnimacao, async () => {
+        await aplicarSessao(indice, markdown, html, paginaAlvo);
+      });
     }
 
     atualizarHash(sessao.id);
@@ -307,30 +325,98 @@ async function carregarMarkdown(sessao) {
   return markdown;
 }
 
-function aplicarSessao(indice, markdown, html) {
+async function aplicarSessao(indice, markdown, html, paginaAlvo = 0) {
   const sessao = estado.sessoes[indice];
 
   estado.indiceAtual = indice;
   estado.markdownAtual = markdown;
-
-  elementos.conteudo.innerHTML = html;
-  elementos.conteudo.scrollTop = 0;
-  ajustarDensidadeConteudo();
+  estado.htmlAtual = html;
 
   elementos.cabecalhoEsquerdo.textContent =
     `${formatarData(sessao.data)} · ${sessao.titulo}`;
-
-  elementos.cabecalhoDireito.textContent =
-    `Tempos Perturbados · Registro ${indice + 1}`;
 
   elementos.tituloAtual.textContent =
     `${formatarData(sessao.data)} - ${sessao.titulo}`;
 
   elementos.estadoTexto.textContent = sessao.titulo;
-  elementos.indicadorPagina.textContent =
-    `${indice + 1} de ${estado.sessoes.length}`;
 
+  await configurarConteudoAtual(paginaAlvo);
   destacarItemAtual(sessao.id);
+}
+
+async function configurarConteudoAtual(paginaAlvo = 0) {
+  limparAjustesConteudo();
+
+  if (estado.modoMobile) {
+    elementos.conteudo.innerHTML = estado.htmlAtual;
+    await esperarDoisFrames();
+
+    estado.paginasMobile = paginarHtmlParaMobile(estado.htmlAtual);
+
+    if (estado.paginasMobile.length === 0) {
+      estado.paginasMobile = [estado.htmlAtual];
+    }
+
+    const indiceDesejado = paginaAlvo === "last"
+      ? estado.paginasMobile.length - 1
+      : Number(paginaAlvo) || 0;
+
+    estado.paginaInternaAtual = limitar(
+      indiceDesejado,
+      0,
+      estado.paginasMobile.length - 1
+    );
+
+    exibirPaginaMobile();
+  } else {
+    estado.paginasMobile = [];
+    estado.paginaInternaAtual = 0;
+    elementos.conteudo.innerHTML = estado.htmlAtual;
+    elementos.conteudo.scrollTop = 0;
+    await ajustarTextoDesktop();
+  }
+
+  atualizarIndicadores();
+}
+
+function exibirPaginaMobile() {
+  elementos.conteudo.innerHTML =
+    estado.paginasMobile[estado.paginaInternaAtual] || "";
+  elementos.conteudo.scrollTop = 0;
+  atualizarIndicadores();
+}
+
+async function virarPaginaInterna(novoIndice, direcao) {
+  if (
+    novoIndice < 0 ||
+    novoIndice >= estado.paginasMobile.length ||
+    novoIndice === estado.paginaInternaAtual
+  ) {
+    return;
+  }
+
+  await animarVirada(direcao, () => {
+    estado.paginaInternaAtual = novoIndice;
+    exibirPaginaMobile();
+  });
+
+  atualizarControles();
+}
+
+async function animarVirada(direcao, trocarConteudo) {
+  estado.animando = true;
+  atualizarControles();
+
+  const classe = direcao === "previous" ? "turn-previous" : "turn-next";
+  elementos.livro.classList.add(classe);
+
+  await esperar(DURACAO_VIRADA * 0.46);
+  await trocarConteudo();
+  await esperar(DURACAO_VIRADA * 0.54);
+
+  elementos.livro.classList.remove("turn-next", "turn-previous");
+  estado.animando = false;
+  atualizarControles();
 }
 
 async function fecharLivro() {
@@ -339,6 +425,7 @@ async function fecharLivro() {
   }
 
   estado.animando = true;
+  atualizarControles();
   elementos.livro.classList.remove("is-open");
   elementos.livro.setAttribute("aria-label", "Diário fechado");
 
@@ -346,6 +433,9 @@ async function fecharLivro() {
 
   estado.indiceAtual = -1;
   estado.markdownAtual = "";
+  estado.htmlAtual = "";
+  estado.paginasMobile = [];
+  estado.paginaInternaAtual = 0;
 
   elementos.tituloAtual.textContent = "O diário permanece fechado";
   elementos.estadoTexto.textContent = "Diário fechado.";
@@ -361,41 +451,228 @@ async function fecharLivro() {
   atualizarControles();
 }
 
-function ajustarDensidadeConteudo() {
-  elementos.conteudo.classList.remove("is-dense", "is-very-dense");
+async function ajustarTextoDesktop() {
+  limparAjustesConteudo();
+  await esperarDoisFrames();
 
-  if (
-    estado.indiceAtual < 0 ||
-    window.matchMedia("(max-width: 780px)").matches
-  ) {
-    return;
-  }
+  const estilo = getComputedStyle(elementos.conteudo);
+  const tamanhoInicial = Number.parseFloat(estilo.fontSize) || 17;
+  const alturaLinhaInicial = Number.parseFloat(estilo.lineHeight) || tamanhoInicial * 1.42;
+  const proporcaoLinha = alturaLinhaInicial / tamanhoInicial;
+  const tamanhoMinimo = 9.25;
+  let tamanho = tamanhoInicial;
 
-  // Força o navegador a recalcular as colunas antes da medição.
-  void elementos.conteudo.offsetHeight;
-
-  if (!conteudoTransborda()) {
-    return;
-  }
-
-  elementos.conteudo.classList.add("is-dense");
-  void elementos.conteudo.offsetHeight;
-
-  if (conteudoTransborda()) {
-    elementos.conteudo.classList.add("is-very-dense");
+  while (conteudoDesktopTransborda() && tamanho > tamanhoMinimo) {
+    tamanho = Math.max(tamanhoMinimo, tamanho - 0.25);
+    elementos.conteudo.style.fontSize = `${tamanho}px`;
+    elementos.conteudo.style.lineHeight = String(
+      Math.max(1.2, proporcaoLinha - (tamanhoInicial - tamanho) * 0.012)
+    );
+    void elementos.conteudo.offsetWidth;
   }
 }
 
-function conteudoTransborda() {
+function conteudoDesktopTransborda() {
   return (
     elementos.conteudo.scrollWidth > elementos.conteudo.clientWidth + 3 ||
     elementos.conteudo.scrollHeight > elementos.conteudo.clientHeight + 3
   );
 }
 
+function paginarHtmlParaMobile(html) {
+  if (!html.trim() || elementos.conteudo.clientHeight <= 0) {
+    return [html];
+  }
+
+  const origem = document.createElement("div");
+  origem.innerHTML = html;
+
+  const posicoes = coletarPosicoesDeQuebra(origem);
+  if (posicoes.length === 0) {
+    return [html];
+  }
+
+  const medidor = elementos.conteudo.cloneNode(false);
+  medidor.removeAttribute("id");
+  medidor.className = "conteudo-pagina medidor-paginacao";
+  medidor.style.width = `${elementos.conteudo.clientWidth}px`;
+  medidor.style.height = `${elementos.conteudo.clientHeight}px`;
+  document.body.appendChild(medidor);
+
+  const paginas = [];
+  let inicio = { no: origem, deslocamento: 0 };
+  let indiceInicial = 0;
+
+  while (indiceInicial < posicoes.length) {
+    let minimo = indiceInicial;
+    let maximo = posicoes.length - 1;
+    let melhorIndice = -1;
+    let melhorHtml = "";
+
+    while (minimo <= maximo) {
+      const meio = Math.floor((minimo + maximo) / 2);
+      const candidato = criarFragmentoHtml(origem, inicio, posicoes[meio]);
+
+      medidor.innerHTML = candidato;
+      const cabe =
+        medidor.scrollHeight <= medidor.clientHeight + 2 &&
+        medidor.scrollWidth <= medidor.clientWidth + 2;
+
+      if (cabe) {
+        melhorIndice = meio;
+        melhorHtml = candidato;
+        minimo = meio + 1;
+      } else {
+        maximo = meio - 1;
+      }
+    }
+
+    if (melhorIndice < indiceInicial) {
+      melhorIndice = indiceInicial;
+      melhorHtml = criarFragmentoHtml(origem, inicio, posicoes[melhorIndice]);
+    }
+
+    if (melhorHtml.trim()) {
+      paginas.push(melhorHtml);
+    }
+
+    inicio = posicoes[melhorIndice];
+    indiceInicial = melhorIndice + 1;
+  }
+
+  medidor.remove();
+  return paginas.length ? paginas : [html];
+}
+
+function coletarPosicoesDeQuebra(raiz) {
+  const posicoes = [];
+  const walker = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
+  let no;
+
+  while ((no = walker.nextNode())) {
+    const regex = /\S+\s*/g;
+    let correspondencia;
+
+    while ((correspondencia = regex.exec(no.nodeValue || ""))) {
+      posicoes.push({
+        no,
+        deslocamento: correspondencia.index + correspondencia[0].length,
+      });
+    }
+  }
+
+  return posicoes;
+}
+
+function criarFragmentoHtml(raiz, inicio, fim) {
+  const intervalo = document.createRange();
+
+  if (inicio.no === raiz) {
+    intervalo.setStart(raiz, inicio.deslocamento);
+  } else {
+    intervalo.setStart(inicio.no, inicio.deslocamento);
+  }
+
+  intervalo.setEnd(fim.no, fim.deslocamento);
+
+  const recipiente = document.createElement("div");
+  recipiente.appendChild(intervalo.cloneContents());
+  return recipiente.innerHTML;
+}
+
+async function reconfigurarAposRedimensionamento() {
+  const novoModoMobile = window.matchMedia(MEDIA_MOBILE).matches;
+  const modoMudou = novoModoMobile !== estado.modoMobile;
+  const totalAnterior = estado.paginasMobile.length;
+  const paginaAnterior = estado.paginaInternaAtual;
+
+  estado.modoMobile = novoModoMobile;
+
+  if (estado.indiceAtual < 0 || estado.animando || estado.carregando) {
+    atualizarControles();
+    return;
+  }
+
+  let paginaAlvo = 0;
+  if (!modoMudou && novoModoMobile && totalAnterior > 1) {
+    const proporcao = paginaAnterior / (totalAnterior - 1);
+    paginaAlvo = { proporcao };
+  }
+
+  await reconfigurarConteudoAtual(paginaAlvo);
+}
+
+async function reconfigurarConteudoAtual(paginaAlvo = 0) {
+  if (estado.indiceAtual < 0 || !estado.htmlAtual) {
+    return;
+  }
+
+  const proporcaoSolicitada =
+    paginaAlvo && typeof paginaAlvo === "object"
+      ? paginaAlvo.proporcao
+      : null;
+
+  await configurarConteudoAtual(0);
+
+  if (
+    estado.modoMobile &&
+    proporcaoSolicitada !== null &&
+    estado.paginasMobile.length > 1
+  ) {
+    estado.paginaInternaAtual = Math.round(
+      proporcaoSolicitada * (estado.paginasMobile.length - 1)
+    );
+    exibirPaginaMobile();
+  }
+
+  atualizarControles();
+}
+
+function limparAjustesConteudo() {
+  elementos.conteudo.style.removeProperty("font-size");
+  elementos.conteudo.style.removeProperty("line-height");
+  elementos.conteudo.classList.remove("is-dense", "is-very-dense");
+}
+
+function atualizarIndicadores() {
+  if (estado.indiceAtual < 0) {
+    elementos.indicadorPagina.textContent = "";
+    return;
+  }
+
+  const sessao = estado.sessoes[estado.indiceAtual];
+
+  if (estado.modoMobile) {
+    const pagina = estado.paginaInternaAtual + 1;
+    const totalPaginas = Math.max(estado.paginasMobile.length, 1);
+
+    elementos.indicadorPagina.textContent =
+      `Registro ${estado.indiceAtual + 1} de ${estado.sessoes.length} · ` +
+      `Página ${pagina} de ${totalPaginas}`;
+
+    elementos.cabecalhoDireito.textContent = "";
+    elementos.cabecalhoEsquerdo.textContent =
+      `${formatarData(sessao.data)} · ${sessao.titulo} · ${pagina}/${totalPaginas}`;
+  } else {
+    elementos.indicadorPagina.textContent =
+      `Registro ${estado.indiceAtual + 1} de ${estado.sessoes.length}`;
+
+    elementos.cabecalhoEsquerdo.textContent =
+      `${formatarData(sessao.data)} · ${sessao.titulo}`;
+
+    elementos.cabecalhoDireito.textContent =
+      `Tempos Perturbados · Registro ${estado.indiceAtual + 1}`;
+  }
+}
+
 function atualizarControles() {
   const possuiSessoes = estado.sessoes.length > 0;
   const estaAberto = estado.indiceAtual >= 0;
+  const possuiPaginaSeguinte =
+    estado.modoMobile &&
+    estado.paginaInternaAtual < estado.paginasMobile.length - 1;
+  const possuiNotaSeguinte =
+    estaAberto && estado.indiceAtual < estado.sessoes.length - 1;
 
   elementos.setaEsquerda.disabled =
     !estaAberto || estado.animando || estado.carregando;
@@ -404,7 +681,7 @@ function atualizarControles() {
     !possuiSessoes ||
     estado.animando ||
     estado.carregando ||
-    (estaAberto && estado.indiceAtual >= estado.sessoes.length - 1);
+    (estaAberto && !possuiPaginaSeguinte && !possuiNotaSeguinte);
 
   elementos.botaoDownload.disabled =
     !estaAberto || estado.animando || estado.carregando;
@@ -501,16 +778,24 @@ function mostrarErro(mensagem) {
   console.error(mensagem);
 }
 
+function aguardarFontes() {
+  return document.fonts?.ready || Promise.resolve();
+}
+
 function esperar(milisegundos) {
   return new Promise((resolver) => setTimeout(resolver, milisegundos));
 }
 
-/*
- * Conversor Markdown deliberadamente pequeno e local.
- * Ele cobre os elementos usados no diário sem depender de bibliotecas externas:
- * títulos, parágrafos, quebras de linha, listas, citações, negrito, itálico,
- * links, código, separadores e wikilinks do Obsidian.
- */
+function esperarDoisFrames() {
+  return new Promise((resolver) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolver));
+  });
+}
+
+function limitar(valor, minimo, maximo) {
+  return Math.min(Math.max(valor, minimo), maximo);
+}
+
 function converterMarkdown(markdown) {
   const linhas = markdown.split("\n");
   const saida = [];

@@ -10,4 +10,4 @@ Write-Host "Pressione Ctrl+C para encerrar."
 Write-Host ""
 
 Start-Process "http://localhost:8000"
-python -m http.server 8000
+python -m http.server 8000 --bind 127.0.0.1

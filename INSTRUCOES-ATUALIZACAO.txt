@@ -1,0 +1,23 @@
+ATUALIZAÇÃO DA PAGINAÇÃO DO DIÁRIO
+
+1. Extraia este ZIP na raiz do repositório VitEmiliano.github.io.
+2. Autorize a substituição dos arquivos existentes.
+3. Teste localmente com:
+   python -m http.server 8000 --bind 127.0.0.1
+4. Publique:
+   git add .
+   git commit -m "Ajusta paginação responsiva do diário"
+   git push
+
+Arquivos alterados:
+- css/estilo.css
+- js/diario.js
+- testar_site.ps1
+
+Principais mudanças:
+- Diário mais largo e um pouco mais baixo no celular.
+- Setas posicionadas abaixo do diário no celular.
+- Notas longas são divididas em várias páginas no celular.
+- A próxima nota só abre após o fim da nota atual.
+- No desktop, parágrafos podem continuar da página esquerda para a direita.
+- No desktop, a fonte é reduzida gradualmente até o texto caber na abertura.
