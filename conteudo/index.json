@@ -1,8 +1,8 @@
 {
   "versao": 1,
-  "total": 12,
+  "total": 13,
   "primeira_sessao": "2026-02-24",
-  "ultima_sessao": "2026-07-14",
+  "ultima_sessao": "2026-07-28",
   "sessoes": [
     {
       "id": "2026-02-24-uma-nova-manha",
@@ -75,6 +75,12 @@
       "data": "2026-07-14",
       "titulo": "Um Mês Até Thultanthar",
       "arquivo": "conteudo/sessoes/Diário - 2026-07-14 - Um Mês Até Thultanthar.md"
+    },
+    {
+      "id": "2026-07-28-a-verdade-sobre-kaede",
+      "data": "2026-07-28",
+      "titulo": "A verdade sobre Kaede",
+      "arquivo": "conteudo/sessoes/Diário - 2026-07-28 - A verdade sobre Kaede.md"
     }
   ]
 }
