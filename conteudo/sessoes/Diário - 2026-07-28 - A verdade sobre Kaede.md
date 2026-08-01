@@ -21,3 +21,6 @@ Eu odeio Shar, odeio seus joguinhos. Mas vamos fazer esses "testes", pelo menos 
 Eu não sei mais o que Kaede faria no meu lugar, eu não sei nem o que ela está fazendo nesse exato momento.
 
 Kaede, onde quer que você esteja, eu vou encontrá-la. 🌸
+
+
+— Zouro Roronoa
