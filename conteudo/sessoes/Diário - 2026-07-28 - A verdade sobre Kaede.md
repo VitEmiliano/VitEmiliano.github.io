@@ -22,5 +22,4 @@ Eu não sei mais o que Kaede faria no meu lugar, eu não sei nem o que ela está
 
 Kaede, onde quer que você esteja, eu vou encontrá-la. 🌸
 
-
 — Zouro Roronoa
