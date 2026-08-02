@@ -1,6 +1,8 @@
 {
-  "versao": 1,
+  "versao": 2,
   "total": 13,
+  "total_sessoes": 13,
+  "total_missoes": 17,
   "primeira_sessao": "2026-02-24",
   "ultima_sessao": "2026-07-28",
   "sessoes": [
@@ -8,79 +10,264 @@
       "id": "2026-02-24-uma-nova-manha",
       "data": "2026-02-24",
       "titulo": "Uma Nova Manhã",
-      "arquivo": "conteudo/sessoes/Diário - 2026-02-24 - Uma Nova Manhã.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-02-24 - Uma Nova Manhã.md",
+      "origem_relativa": "2026-02-24 - Uma Nova Manhã.md"
     },
     {
       "id": "2026-03-10-chegada-em-daggerford",
       "data": "2026-03-10",
       "titulo": "Chegada em Daggerford",
-      "arquivo": "conteudo/sessoes/Diário - 2026-03-10 - Chegada em Daggerford.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-03-10 - Chegada em Daggerford.md",
+      "origem_relativa": "2026-03-10 - Chegada em Daggerford.md"
     },
     {
       "id": "2026-03-24-saida-para-o-vale-do-riso",
       "data": "2026-03-24",
       "titulo": "Saída para o Vale do Riso",
-      "arquivo": "conteudo/sessoes/Diário - 2026-03-24 - Saída para o Vale do Riso.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-03-24 - Saída para o Vale do Riso.md",
+      "origem_relativa": "2026-03-24 - Saída para o Vale do Riso.md"
     },
     {
       "id": "2026-03-29-exploracao-do-vale-do-riso",
       "data": "2026-03-29",
       "titulo": "Exploração do Vale do Riso",
-      "arquivo": "conteudo/sessoes/Diário - 2026-03-29 - Exploração do Vale do Riso.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-03-29 - Exploração do Vale do Riso.md",
+      "origem_relativa": "2026-03-29 - Exploração do Vale do Riso.md"
     },
     {
       "id": "2026-04-07-subida-no-monte-illefarn",
       "data": "2026-04-07",
       "titulo": "Subida no Monte Illefarn",
-      "arquivo": "conteudo/sessoes/Diário - 2026-04-07 - Subida no Monte Illefarn.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-04-07 - Subida no Monte Illefarn.md",
+      "origem_relativa": "2026-04-07 - Subida no Monte Illefarn.md"
     },
     {
       "id": "2026-05-05-exorcismo-do-dragao-delimbiyr",
       "data": "2026-05-05",
       "titulo": "Exorcismo do Dragão Delimbiyr",
-      "arquivo": "conteudo/sessoes/Diário - 2026-05-05 - Exorcismo do Dragão Delimbiyr.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-05-05 - Exorcismo do Dragão Delimbiyr.md",
+      "origem_relativa": "2026-05-05 - Exorcismo do Dragão Delimbiyr.md"
     },
     {
       "id": "2026-05-19-descida-para-umbreterra",
       "data": "2026-05-19",
       "titulo": "Descida para Umbreterra",
-      "arquivo": "conteudo/sessoes/Diário - 2026-05-19 - Descida para Umbreterra.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-05-19 - Descida para Umbreterra.md",
+      "origem_relativa": "2026-05-19 - Descida para Umbreterra.md"
     },
     {
       "id": "2026-06-02-inicio-da-exploracao-de-umbreterra",
       "data": "2026-06-02",
       "titulo": "Início da Exploração de Umbreterra",
-      "arquivo": "conteudo/sessoes/Diário - 2026-06-02 - Início da Exploração de Umbreterra.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-02 - Início da Exploração de Umbreterra.md",
+      "origem_relativa": "2026-06-02 - Início da Exploração de Umbreterra.md"
     },
     {
       "id": "2026-06-16-vilarejo-de-shar",
       "data": "2026-06-16",
       "titulo": "Vilarejo de Shar",
-      "arquivo": "conteudo/sessoes/Diário - 2026-06-16 - Vilarejo de Shar.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-16 - Vilarejo de Shar.md",
+      "origem_relativa": "2026-06-16 - Vilarejo de Shar.md"
     },
     {
       "id": "2026-06-20-sessao-presencial-enigma-do-vilarejo-de-shar",
       "data": "2026-06-20",
       "titulo": "Sessão Presencial (Enigma do Vilarejo de Shar)",
-      "arquivo": "conteudo/sessoes/Diário - 2026-06-20 - Sessão Presencial (Enigma do Vilarejo de Shar).md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-20 - Sessão Presencial (Enigma do Vilarejo de Shar).md",
+      "origem_relativa": "2026-06-20 - Sessão Presencial (Enigma do Vilarejo de Shar).md"
     },
     {
       "id": "2026-06-30-retorno-ao-vilarejo-de-shar",
       "data": "2026-06-30",
       "titulo": "Retorno ao Vilarejo de Shar",
-      "arquivo": "conteudo/sessoes/Diário - 2026-06-30 - Retorno ao Vilarejo de Shar.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-06-30 - Retorno ao Vilarejo de Shar.md",
+      "origem_relativa": "2026-06-30 - Retorno ao Vilarejo de Shar.md"
     },
     {
       "id": "2026-07-14-um-mes-ate-thultanthar",
       "data": "2026-07-14",
       "titulo": "Um Mês Até Thultanthar",
-      "arquivo": "conteudo/sessoes/Diário - 2026-07-14 - Um Mês Até Thultanthar.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-07-14 - Um Mês Até Thultanthar.md",
+      "origem_relativa": "2026-07-14 - Um Mês Até Thultanthar.md"
     },
     {
       "id": "2026-07-28-a-verdade-sobre-kaede",
       "data": "2026-07-28",
       "titulo": "A verdade sobre Kaede",
-      "arquivo": "conteudo/sessoes/Diário - 2026-07-28 - A verdade sobre Kaede.md"
+      "arquivo": "conteudo/sessoes/Diário - 2026-07-28 - A verdade sobre Kaede.md",
+      "origem_relativa": "2026-07-28 - A verdade sobre Kaede.md"
+    }
+  ],
+  "missoes": [
+    {
+      "id": "achem-os-companheiros-de-alfira",
+      "titulo": "Achem os companheiros de Alfira",
+      "arquivo": "conteudo/missoes/Achem os companheiros de Alfira.md",
+      "origem_relativa": "Missões Concluídas/Achem os companheiros de Alfira.md",
+      "status": "Concluída",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "busquem-mystra",
+      "titulo": "Busquem Mystra",
+      "arquivo": "conteudo/missoes/Busquem Mystra.md",
+      "origem_relativa": "Missões Concluídas/Busquem Mystra.md",
+      "status": "Concluída",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "choque-o-ovo-malaugrym",
+      "titulo": "Choque o ovo Malaugrym",
+      "arquivo": "conteudo/missoes/Choque o ovo Malaugrym.md",
+      "origem_relativa": "Missões Ativas/Choque o ovo Malaugrym.md",
+      "status": "Ativa",
+      "acesso": [
+        "Jonas Oliveira Neves"
+      ]
+    },
+    {
+      "id": "coletem-reagentes-magicos-daggerford",
+      "titulo": "Coletem Reagentes Mágicos - Daggerford",
+      "arquivo": "conteudo/missoes/Coletem Reagentes Mágicos - Daggerford.md",
+      "origem_relativa": "Missões Ativas/Coletem Reagentes Mágicos - Daggerford.md",
+      "status": "Ativa",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "descubra-a-verdade-sobre-kaede",
+      "titulo": "Descubra a verdade sobre Kaede",
+      "arquivo": "conteudo/missoes/Descubra a verdade sobre Kaede.md",
+      "origem_relativa": "Missões Ativas/Descubra a verdade sobre Kaede.md",
+      "status": "Ativa",
+      "acesso": [
+        "Zouro Roronoa"
+      ]
+    },
+    {
+      "id": "descubram-as-intencoes-de-shar",
+      "titulo": "Descubram as intenções de Shar",
+      "arquivo": "conteudo/missoes/Descubram as intenções de Shar.md",
+      "origem_relativa": "Missões Ativas/Descubram as intenções de Shar.md",
+      "status": "Ativa",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "descubram-o-paradeiro-de-luchia",
+      "titulo": "Descubram o paradeiro de Luchia",
+      "arquivo": "conteudo/missoes/Descubram o paradeiro de Luchia.md",
+      "origem_relativa": "Missões Ativas/Descubram o paradeiro de Luchia.md",
+      "status": "Ativa",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "desvende-os-seus-sonhos-bernard",
+      "titulo": "Desvende os seus sonhos - Bernard",
+      "arquivo": "conteudo/missoes/Desvende os seus sonhos - Bernard.md",
+      "origem_relativa": "Missões Concluídas/Desvende os seus sonhos - Bernard.md",
+      "status": "Concluída",
+      "acesso": [
+        "Bernard"
+      ]
+    },
+    {
+      "id": "desvende-os-seus-sonhos-dhaldor",
+      "titulo": "Desvende os seus sonhos - Dhaldor",
+      "arquivo": "conteudo/missoes/Desvende os seus sonhos - Dhaldor.md",
+      "origem_relativa": "Missões Ativas/Desvende os seus sonhos - Dhaldor.md",
+      "status": "Ativa",
+      "acesso": [
+        "Dhaldor Torunn"
+      ]
+    },
+    {
+      "id": "encontre-a-tripulacao-do-sereia-de-prata",
+      "titulo": "Encontre a tripulação do Sereia de Prata",
+      "arquivo": "conteudo/missoes/Encontre a tripulação do Sereia de Prata.md",
+      "origem_relativa": "Missões Ativas/Encontre a tripulação do Sereia de Prata.md",
+      "status": "Ativa",
+      "acesso": [
+        "Jonas Oliveira Neves"
+      ]
+    },
+    {
+      "id": "explore-o-poder-da-arma-do-olhar-demoniaco",
+      "titulo": "Explore o poder da Arma do Olhar Demoníaco",
+      "arquivo": "conteudo/missoes/Explore o poder da Arma do Olhar Demoníaco.md",
+      "origem_relativa": "Missões Ativas/Explore o poder da Arma do Olhar Demoníaco.md",
+      "status": "Ativa",
+      "acesso": [
+        "Jonas Oliveira Neves"
+      ]
+    },
+    {
+      "id": "obtenha-o-coracao-de-chalsembyr",
+      "titulo": "Obtenha o Coração de Chalsembyr",
+      "arquivo": "conteudo/missoes/Obtenha o Coração de Chalsembyr.md",
+      "origem_relativa": "Missões Concluídas/Obtenha o Coração de Chalsembyr.md",
+      "status": "Concluída",
+      "acesso": [
+        "Bernard"
+      ]
+    },
+    {
+      "id": "passe-pelo-conselho-de-antharan",
+      "titulo": "Passe pelo Conselho de Antharan",
+      "arquivo": "conteudo/missoes/Passe pelo Conselho de Antharan.md",
+      "origem_relativa": "Missões Concluídas/Passe pelo Conselho de Antharan.md",
+      "status": "Concluída",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "provem-seu-valor-no-coliseu-de-thultanthar",
+      "titulo": "Provem seu valor no Coliseu de Thultanthar",
+      "arquivo": "conteudo/missoes/Provem seu valor no Coliseu de Thultanthar.md",
+      "origem_relativa": "Missões Ativas/Provem seu valor no Coliseu de Thultanthar.md",
+      "status": "Ativa",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "recuperem-as-tabuas-do-destino",
+      "titulo": "Recuperem as Tábuas do Destino",
+      "arquivo": "conteudo/missoes/Recuperem as Tábuas do Destino.md",
+      "origem_relativa": "Missões Ativas/Recuperem as Tábuas do Destino.md",
+      "status": "Ativa",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "salvem-waterdeep",
+      "titulo": "Salvem Waterdeep",
+      "arquivo": "conteudo/missoes/Salvem Waterdeep.md",
+      "origem_relativa": "Missões Concluídas/Salvem Waterdeep.md",
+      "status": "Concluída",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
+      "id": "utilize-os-ossos-de-dragao-vermelho",
+      "titulo": "Utilize os ossos de dragão vermelho",
+      "arquivo": "conteudo/missoes/Utilize os ossos de dragão vermelho.md",
+      "origem_relativa": "Missões Ativas/Utilize os ossos de dragão vermelho.md",
+      "status": "Ativa",
+      "acesso": [
+        "Jonas Oliveira Neves"
+      ]
     }
   ]
 }
