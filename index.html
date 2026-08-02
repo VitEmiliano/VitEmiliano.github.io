@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#24160f">
   <meta
     name="description"
-    content="Diário dos heróis da campanha Tempos Perturbados."
+    content="Missões e diário dos heróis da campanha Tempos Perturbados."
   >
-  <title>Diário dos Heróis — Tempos Perturbados</title>
+  <title>Tempos Perturbados — Missões e Diário dos Heróis</title>
   <link rel="stylesheet" href="./css/estilo.css">
 </head>
 
@@ -18,6 +18,30 @@
       Este diário precisa de JavaScript habilitado para carregar as entradas.
     </div>
   </noscript>
+
+  <main class="portal-inicial" id="portal-inicial">
+    <div class="portal-inicial__painel">
+      <p class="portal-inicial__sobretitulo">Crônicas da campanha</p>
+      <h1>Tempos Perturbados</h1>
+      <p class="portal-inicial__convite">Que parte da jornada deseja consultar?</p>
+
+      <div class="portal-inicial__opcoes">
+        <button class="cartao-destino" type="button" data-destino="missoes">
+          <span class="cartao-destino__icone icone-missoes" aria-hidden="true">
+            <span>!</span>
+          </span>
+          <strong>Missões</strong>
+          <small>Consulte objetivos ativos e feitos já concluídos.</small>
+        </button>
+
+        <button class="cartao-destino" type="button" data-destino="diario">
+          <span class="cartao-destino__icone icone-diario" aria-hidden="true">▤</span>
+          <strong>Diário dos Heróis</strong>
+          <small>Reviva as sessões registradas pelos aventureiros.</small>
+        </button>
+      </div>
+    </div>
+  </main>
 
   <button
     class="botao-menu"
@@ -30,11 +54,14 @@
     ☰
   </button>
 
-  <aside class="sumario" id="sumario" aria-label="Sumário do diário">
+  <aside class="sumario" id="sumario" aria-label="Navegação da campanha" hidden>
     <div class="sumario__cabecalho">
       <div>
         <p class="sumario__sobretitulo">Tempos Perturbados</p>
-        <h1>Diário dos Heróis</h1>
+        <div class="seletor-pagina" aria-label="Selecionar página">
+          <button type="button" data-destino="missoes">Missões</button>
+          <button type="button" data-destino="diario">Diário dos Heróis</button>
+        </div>
       </div>
 
       <button
@@ -47,7 +74,7 @@
       </button>
     </div>
 
-    <label class="pesquisa" for="pesquisa-entradas">
+    <label class="pesquisa pesquisa--diario" for="pesquisa-entradas">
       <span>Pesquisar entradas</span>
       <input
         id="pesquisa-entradas"
@@ -57,12 +84,14 @@
       >
     </label>
 
-    <nav class="lista-entradas" aria-label="Entradas do diário">
+    <nav class="lista-entradas lista-entradas--diario" aria-label="Entradas do diário">
       <ol id="lista-entradas"></ol>
       <p class="lista-vazia" id="lista-vazia" hidden>
         Nenhuma entrada encontrada.
       </p>
     </nav>
+
+    <nav class="lista-missoes" id="lista-missoes" aria-label="Missões" hidden></nav>
 
     <footer class="sumario__rodape">
       <span id="quantidade-entradas">Carregando registros...</span>
@@ -71,7 +100,7 @@
 
   <div class="fundo-sumario" id="fundo-sumario" hidden></div>
 
-  <main class="palco">
+  <main class="palco" id="pagina-diario" hidden>
     <header class="barra-superior">
       <div>
         <p class="barra-superior__rotulo">Crônicas da campanha</p>
@@ -165,10 +194,40 @@
     </p>
   </main>
 
+  <main class="palco palco--missoes" id="pagina-missoes" hidden>
+    <header class="barra-superior barra-superior--missoes">
+      <div>
+        <p class="barra-superior__rotulo">Quadro de objetivos</p>
+        <h2 id="titulo-missao">Escolha uma missão no painel</h2>
+      </div>
+    </header>
+
+    <section class="papiro" aria-label="Detalhes da missão">
+      <div class="papiro__rolo papiro__rolo--superior" aria-hidden="true"></div>
+      <article class="papiro__conteudo" id="conteudo-missao">
+        <div class="papiro__vazio">
+          <span aria-hidden="true">✦</span>
+          <p>Selecione uma missão para abrir o pergaminho.</p>
+        </div>
+      </article>
+      <div class="papiro__rolo papiro__rolo--inferior" aria-hidden="true"></div>
+    </section>
+  </main>
+
   <div class="mensagem-erro" id="mensagem-erro" role="alert" hidden>
     <strong>Não foi possível carregar o diário.</strong>
     <span id="mensagem-erro-texto"></span>
   </div>
+
+  <dialog class="confirmacao-navegacao" id="confirmacao-navegacao">
+    <form method="dialog">
+      <p id="confirmacao-navegacao-texto"></p>
+      <div class="confirmacao-navegacao__acoes">
+        <button value="cancel">Permanecer aqui</button>
+        <button class="confirmacao-navegacao__confirmar" value="confirm">Ir para a sessão</button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="./js/diario.js" defer></script>
 </body>

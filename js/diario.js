@@ -5,6 +5,10 @@ const DURACAO_VIRADA = 620;
 const MEDIA_MOBILE = "(max-width: 780px)";
 
 const elementos = {
+  portalInicial: document.querySelector("#portal-inicial"),
+  paginaDiario: document.querySelector("#pagina-diario"),
+  paginaMissoes: document.querySelector("#pagina-missoes"),
+  botoesDestino: document.querySelectorAll("[data-destino]"),
   livro: document.querySelector("#livro"),
   capa: document.querySelector("#capa"),
   conteudo: document.querySelector("#conteudo-pagina"),
@@ -17,6 +21,9 @@ const elementos = {
   estadoTexto: document.querySelector("#estado-texto"),
   indicadorPagina: document.querySelector("#indicador-pagina"),
   listaEntradas: document.querySelector("#lista-entradas"),
+  listaMissoes: document.querySelector("#lista-missoes"),
+  conteudoMissao: document.querySelector("#conteudo-missao"),
+  tituloMissao: document.querySelector("#titulo-missao"),
   listaVazia: document.querySelector("#lista-vazia"),
   quantidadeEntradas: document.querySelector("#quantidade-entradas"),
   pesquisa: document.querySelector("#pesquisa-entradas"),
@@ -26,10 +33,15 @@ const elementos = {
   fundoSumario: document.querySelector("#fundo-sumario"),
   mensagemErro: document.querySelector("#mensagem-erro"),
   mensagemErroTexto: document.querySelector("#mensagem-erro-texto"),
+  confirmacao: document.querySelector("#confirmacao-navegacao"),
+  confirmacaoTexto: document.querySelector("#confirmacao-navegacao-texto"),
 };
 
 const estado = {
   sessoes: [],
+  missoes: [],
+  paginaAtual: "entrada",
+  missaoAtual: "",
   indiceAtual: -1,
   markdownAtual: "",
   htmlAtual: "",
@@ -55,8 +67,8 @@ async function inicializar() {
 
     const indice = await resposta.json();
 
-    if (!Array.isArray(indice.sessoes)) {
-      throw new Error('O arquivo index.json não contém a lista "sessoes".');
+    if (!Array.isArray(indice.sessoes) || !Array.isArray(indice.missoes)) {
+      throw new Error('O arquivo index.json não contém as listas "sessoes" e "missoes".');
     }
 
     estado.sessoes = indice.sessoes
@@ -66,7 +78,12 @@ async function inicializar() {
         a.titulo.localeCompare(b.titulo, "pt-BR")
       );
 
+    estado.missoes = indice.missoes
+      .filter(missaoValida)
+      .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"));
+
     renderizarSumario();
+    renderizarMissoes();
 
     elementos.quantidadeEntradas.textContent =
       `${estado.sessoes.length} ${estado.sessoes.length === 1 ? "registro" : "registros"}`;
@@ -78,12 +95,19 @@ async function inicializar() {
     atualizarControles();
     await aguardarFontes();
 
-    const idDaUrl = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+    const rota = lerRota();
+    const idDaUrl = rota.id;
     const indiceDaUrl = estado.sessoes.findIndex(
       (sessao) => sessao.id === idDaUrl
     );
 
-    if (indiceDaUrl >= 0) {
+    const missaoDaUrl = estado.missoes.find((missao) => missao.id === idDaUrl);
+
+    if (rota.tipo === "missao" && missaoDaUrl) {
+      selecionarPagina("missoes");
+      await abrirMissao(missaoDaUrl.id);
+    } else if ((rota.tipo === "sessao" || rota.tipo === "legado") && indiceDaUrl >= 0) {
+      selecionarPagina("diario");
       await abrirSessao(indiceDaUrl, "next", true);
     }
   } catch (erro) {
@@ -94,6 +118,10 @@ async function inicializar() {
 }
 
 function registrarEventos() {
+  elementos.botoesDestino.forEach((botao) => {
+    botao.addEventListener("click", () => selecionarPagina(botao.dataset.destino));
+  });
+
   elementos.setaDireita.addEventListener("click", avancar);
   elementos.setaEsquerda.addEventListener("click", voltar);
   elementos.capa.addEventListener("click", avancar);
@@ -103,9 +131,19 @@ function registrarEventos() {
   elementos.botaoMenu.addEventListener("click", abrirSumarioMobile);
   elementos.botaoFecharSumario.addEventListener("click", fecharSumarioMobile);
   elementos.fundoSumario.addEventListener("click", fecharSumarioMobile);
+  elementos.conteudoMissao.addEventListener("click", tratarLinkDeSessao);
 
   document.addEventListener("keydown", (evento) => {
     if (evento.target.matches("input, textarea, select")) {
+      return;
+    }
+
+    if (evento.key === "Escape" && elementos.sumario.classList.contains("is-open")) {
+      fecharSumarioMobile();
+      return;
+    }
+
+    if (estado.paginaAtual !== "diario") {
       return;
     }
 
@@ -116,11 +154,7 @@ function registrarEventos() {
       evento.preventDefault();
       voltar();
     } else if (evento.key === "Escape") {
-      if (elementos.sumario.classList.contains("is-open")) {
-        fecharSumarioMobile();
-      } else {
-        fecharLivro();
-      }
+      fecharLivro();
     }
   });
 
@@ -140,13 +174,24 @@ function registrarEventos() {
   }
 
   window.addEventListener("hashchange", async () => {
-    const id = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+    const rota = lerRota();
+    const id = rota.id;
     if (!id) {
+      return;
+    }
+
+    if (rota.tipo === "missao") {
+      const missao = estado.missoes.find((item) => item.id === id);
+      if (missao && missao.id !== estado.missaoAtual) {
+        selecionarPagina("missoes", false);
+        await abrirMissao(missao.id, false);
+      }
       return;
     }
 
     const indice = estado.sessoes.findIndex((sessao) => sessao.id === id);
     if (indice >= 0 && indice !== estado.indiceAtual) {
+      selecionarPagina("diario", false);
       await abrirSessao(indice);
     }
   });
@@ -160,6 +205,60 @@ function sessaoValida(sessao) {
     typeof sessao.titulo === "string" &&
     typeof sessao.arquivo === "string"
   );
+}
+
+function missaoValida(missao) {
+  return Boolean(
+    missao &&
+    typeof missao.id === "string" &&
+    typeof missao.titulo === "string" &&
+    typeof missao.arquivo === "string" &&
+    ["Ativa", "Concluída"].includes(missao.status) &&
+    Array.isArray(missao.acesso)
+  );
+}
+
+function selecionarPagina(destino, atualizarUrl = true) {
+  if (!["diario", "missoes"].includes(destino)) {
+    return;
+  }
+
+  estado.paginaAtual = destino;
+  elementos.portalInicial.hidden = true;
+  elementos.sumario.hidden = false;
+  elementos.paginaDiario.hidden = destino !== "diario";
+  elementos.paginaMissoes.hidden = destino !== "missoes";
+  document.body.dataset.pagina = destino;
+
+  elementos.botoesDestino.forEach((botao) => {
+    const ativo = botao.dataset.destino === destino;
+    botao.classList.toggle("is-current", ativo);
+    if (ativo) {
+      botao.setAttribute("aria-current", "page");
+    } else {
+      botao.removeAttribute("aria-current");
+    }
+  });
+
+  document.querySelector(".pesquisa--diario").hidden = destino !== "diario";
+  document.querySelector(".lista-entradas--diario").hidden = destino !== "diario";
+  elementos.listaMissoes.hidden = destino !== "missoes";
+  elementos.quantidadeEntradas.textContent = destino === "diario"
+    ? `${estado.sessoes.length} ${estado.sessoes.length === 1 ? "registro" : "registros"}`
+    : `${estado.missoes.length} ${estado.missoes.length === 1 ? "missão" : "missões"}`;
+
+  fecharSumarioMobile();
+
+  if (!atualizarUrl) {
+    return;
+  }
+  if (destino === "diario" && estado.indiceAtual >= 0) {
+    atualizarHash(estado.sessoes[estado.indiceAtual].id);
+  } else if (destino === "missoes" && estado.missaoAtual) {
+    atualizarHashMissao(estado.missaoAtual);
+  } else {
+    history.replaceState(null, "", `${location.pathname}${location.search}`);
+  }
 }
 
 function renderizarSumario() {
@@ -186,6 +285,153 @@ function renderizarSumario() {
   });
 
   elementos.listaEntradas.replaceChildren(fragmento);
+}
+
+function renderizarMissoes() {
+  const grupos = new Map();
+
+  estado.missoes.forEach((missao) => {
+    const acessos = missao.acesso.length ? missao.acesso : ["Grupo"];
+    acessos.forEach((acesso) => {
+      if (!grupos.has(acesso)) {
+        grupos.set(acesso, []);
+      }
+      grupos.get(acesso).push(missao);
+    });
+  });
+
+  const nomesDosGrupos = [...grupos.keys()].sort((a, b) => {
+    if (normalizarTexto(a) === "grupo") return -1;
+    if (normalizarTexto(b) === "grupo") return 1;
+    return a.localeCompare(b, "pt-BR");
+  });
+
+  const fragmento = document.createDocumentFragment();
+  nomesDosGrupos.forEach((nome) => {
+    const secao = document.createElement("section");
+    secao.className = "grupo-missoes";
+
+    const titulo = document.createElement("h2");
+    titulo.textContent = nome;
+    secao.appendChild(titulo);
+
+    const lista = document.createElement("ul");
+    grupos.get(nome)
+      .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"))
+      .forEach((missao) => {
+        const item = document.createElement("li");
+        item.className = "missao-sumario";
+        item.dataset.id = missao.id;
+        item.classList.toggle("is-complete", missao.status === "Concluída");
+
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.textContent = missao.status === "Concluída"
+          ? `${missao.titulo} (Concluído)`
+          : missao.titulo;
+        botao.addEventListener("click", async () => {
+          await abrirMissao(missao.id);
+          fecharSumarioMobile();
+        });
+
+        item.appendChild(botao);
+        lista.appendChild(item);
+      });
+
+    secao.appendChild(lista);
+    fragmento.appendChild(secao);
+  });
+
+  if (!nomesDosGrupos.length) {
+    const vazio = document.createElement("p");
+    vazio.className = "lista-vazia";
+    vazio.textContent = "Nenhuma missão publicada.";
+    fragmento.appendChild(vazio);
+  }
+
+  elementos.listaMissoes.replaceChildren(fragmento);
+}
+
+async function abrirMissao(id, atualizarUrl = true) {
+  const missao = estado.missoes.find((item) => item.id === id);
+  if (!missao) {
+    return;
+  }
+
+  elementos.tituloMissao.textContent = "Desenrolando o pergaminho...";
+  try {
+    const markdown = await carregarMarkdown(missao);
+    elementos.conteudoMissao.innerHTML = converterMarkdown(markdown);
+    elementos.tituloMissao.textContent = missao.status === "Concluída"
+      ? `${missao.titulo} — Concluída`
+      : missao.titulo;
+    estado.missaoAtual = missao.id;
+    destacarMissaoAtual(missao.id);
+    elementos.conteudoMissao.scrollTop = 0;
+    if (atualizarUrl) {
+      atualizarHashMissao(missao.id);
+    }
+  } catch (erro) {
+    mostrarErro(`Não foi possível abrir "${missao.titulo}": ${erro.message}`);
+  }
+}
+
+function destacarMissaoAtual(id) {
+  elementos.listaMissoes.querySelectorAll(".missao-sumario").forEach((item) => {
+    const atual = item.dataset.id === id;
+    item.classList.toggle("is-current", atual);
+    const botao = item.querySelector("button");
+    if (atual) {
+      botao?.setAttribute("aria-current", "page");
+    } else {
+      botao?.removeAttribute("aria-current");
+    }
+  });
+}
+
+async function tratarLinkDeSessao(evento) {
+  const link = evento.target.closest("a.session-link");
+  if (!link) {
+    return;
+  }
+  evento.preventDefault();
+
+  const nomeArquivo = obterNomeArquivo(link.getAttribute("href"));
+  const indice = estado.sessoes.findIndex(
+    (sessao) => obterNomeArquivo(sessao.arquivo) === nomeArquivo
+  );
+  const titulo = indice >= 0
+    ? estado.sessoes[indice].titulo
+    : nomeArquivo.replace(/^Diário - \d{4}-\d{2}-\d{2} - /, "").replace(/\.md$/i, "");
+
+  if (indice < 0) {
+    mostrarErro(`A sessão "${titulo}" ainda não está publicada no diário.`);
+    return;
+  }
+
+  const confirmou = await confirmarNavegacao(titulo);
+  if (!confirmou) {
+    return;
+  }
+
+  selecionarPagina("diario", false);
+  await abrirSessao(indice, "next", true);
+}
+
+function confirmarNavegacao(titulo) {
+  elementos.confirmacaoTexto.textContent = `Deseja ir para a missão: ${titulo}?`;
+  if (typeof elementos.confirmacao.showModal !== "function") {
+    return Promise.resolve(window.confirm(elementos.confirmacaoTexto.textContent));
+  }
+
+  return new Promise((resolver) => {
+    elementos.confirmacao.addEventListener(
+      "close",
+      () => resolver(elementos.confirmacao.returnValue === "confirm"),
+      { once: true }
+    );
+    elementos.confirmacao.showModal();
+  });
 }
 
 function filtrarSumario() {
@@ -306,8 +552,9 @@ async function abrirSessao(
 }
 
 async function carregarMarkdown(sessao) {
-  if (estado.cacheMarkdown.has(sessao.id)) {
-    return estado.cacheMarkdown.get(sessao.id);
+  const chaveCache = sessao.arquivo;
+  if (estado.cacheMarkdown.has(chaveCache)) {
+    return estado.cacheMarkdown.get(chaveCache);
   }
 
   const url = new URL(sessao.arquivo, document.baseURI);
@@ -321,7 +568,7 @@ async function carregarMarkdown(sessao) {
     .replace(/^\uFEFF/, "")
     .replace(/\r\n?/g, "\n");
 
-  estado.cacheMarkdown.set(sessao.id, markdown);
+  estado.cacheMarkdown.set(chaveCache, markdown);
   return markdown;
 }
 
@@ -740,10 +987,26 @@ function obterNomeArquivo(caminho) {
 }
 
 function atualizarHash(id) {
-  const novoHash = `#${encodeURIComponent(id)}`;
+  const novoHash = `#sessao/${encodeURIComponent(id)}`;
   if (window.location.hash !== novoHash) {
     history.replaceState(null, "", novoHash);
   }
+}
+
+function atualizarHashMissao(id) {
+  const novoHash = `#missao/${encodeURIComponent(id)}`;
+  if (window.location.hash !== novoHash) {
+    history.replaceState(null, "", novoHash);
+  }
+}
+
+function lerRota() {
+  const valor = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+  const match = valor.match(/^(sessao|missao)\/(.+)$/);
+  if (match) {
+    return { tipo: match[1], id: match[2] };
+  }
+  return { tipo: valor ? "legado" : "entrada", id: valor };
 }
 
 function formatarData(dataIso) {
@@ -927,6 +1190,10 @@ function converterInline(texto) {
       const urlLimpa = url.replaceAll("&amp;", "&");
       if (!urlPermitida(urlLimpa)) {
         return rotulo;
+      }
+
+      if (/\.\.\/sessoes\/Di%C3%A1rio%20-|\.\.\/sessoes\/Diário(?:%20|\s)-/i.test(urlLimpa)) {
+        return `<a class="session-link" href="${url}">${rotulo}</a>`;
       }
 
       return `<a href="${url}" target="_blank" rel="noopener noreferrer">${rotulo}</a>`;

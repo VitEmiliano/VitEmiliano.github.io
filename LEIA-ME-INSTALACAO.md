@@ -15,7 +15,8 @@ Mantenha os arquivos que o script já criou:
 .nojekyll
 conteudo/
 ├── index.json
-└── sessoes/
+├── sessoes/
+└── missoes/
 ```
 
 A estrutura final deve ficar assim:
@@ -31,8 +32,10 @@ VitEmiliano.github.io/
 │   └── diario.js
 └── conteudo/
     ├── index.json
-    └── sessoes/
-        └── Diário - AAAA-MM-DD - Título.md
+    ├── sessoes/
+    │   └── Diário - AAAA-MM-DD - Título.md
+    └── missoes/
+        └── Nome da missão.md
 ```
 
 ## Teste local
@@ -54,21 +57,28 @@ Também é possível executar `testar_site.ps1`.
 
 ## Publicação
 
+Na pasta que contém o repositório, execute:
+
 ```powershell
-git add .
-git commit -m "Adiciona interface do diário"
-git push
+python publicar_site_github.py
 ```
+
+O script sincroniza o conteúdo, valida o site, mostra todas as alterações e
+pede confirmação antes de criar o commit e enviá-lo ao GitHub. Para atualizar
+somente os arquivos em `conteudo/`, sem commit ou envio, execute
+`python sincronizar_conteudo.py`.
 
 O GitHub Pages usará `index.html` como página inicial.
 
 ## Recursos incluídos
 
+- página inicial com acesso às missões e ao diário;
+- missões agrupadas por acesso e exibidas em formato de papiro;
 - diário inicialmente fechado;
 - sumário pesquisável;
 - navegação por setas e teclado;
 - animação de virar página;
-- abertura direta por URL com `#id-da-sessao`;
+- abertura direta por URL para sessões e missões;
 - download do Markdown original;
 - leiaute responsivo para celular;
 - conversão local de Markdown sem biblioteca JavaScript externa.

@@ -1,0 +1,9 @@
+# Arquivos locais que nunca devem ser publicados no site.
+.env
+.env.*
+!.env.example
+node_modules/
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
