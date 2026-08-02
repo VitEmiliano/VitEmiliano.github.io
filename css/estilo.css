@@ -282,19 +282,58 @@ body:not([data-pagina]) .botao-menu {
   padding: 0.7rem;
   scrollbar-color: rgba(200, 155, 75, 0.55) transparent;
   scrollbar-width: thin;
+  font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
 }
 
 .grupo-missoes h2 {
   margin: 0.8rem 0.55rem 0.3rem;
+}
+
+.grupo-missoes__alternador {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  border: 0;
+  border-radius: 0.28rem;
+  padding: 0.48rem 0.42rem;
   color: var(--ouro-claro);
+  background: transparent;
   font-size: 0.76rem;
+  font-weight: 700;
   letter-spacing: 0.1em;
+  text-align: left;
   text-transform: uppercase;
+  cursor: pointer;
+}
+
+.grupo-missoes__alternador::after {
+  content: "▸";
+  font-size: 0.9rem;
+  transition: transform 160ms ease;
+}
+
+.grupo-missoes__alternador[aria-expanded="true"]::after {
+  transform: rotate(90deg);
+}
+
+.grupo-missoes__alternador:hover:not(:disabled) {
+  background: rgba(200, 155, 75, 0.08);
+}
+
+.grupo-missoes__alternador.is-always-open {
+  cursor: default;
+}
+
+.grupo-missoes__alternador.is-always-open::after {
+  content: "";
 }
 
 .grupo-missoes ul {
-  margin: 0;
-  padding: 0;
+  margin: 0 0 0.35rem 0.72rem;
+  border-left: 1px solid rgba(232, 195, 118, 0.18);
+  padding: 0 0 0 0.35rem;
   list-style: none;
 }
 
@@ -440,6 +479,7 @@ body:not([data-pagina]) .botao-menu {
 .barra-superior--missoes {
   max-width: 920px;
   padding-inline: 1.2rem;
+  font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
 }
 
 .papiro {
@@ -491,7 +531,7 @@ body:not([data-pagina]) .botao-menu {
   z-index: 1;
   max-width: 720px;
   margin: 0 auto;
-  font-family: "Kalam", "Segoe Print", cursive;
+  font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
   font-size: clamp(1rem, 1.5vw, 1.18rem);
   line-height: 1.55;
 }
@@ -501,7 +541,8 @@ body:not([data-pagina]) .botao-menu {
 .papiro__conteudo h3,
 .papiro__conteudo h4 {
   margin: 1.1em 0 0.45em;
-  font-family: "UnifrakturCook", Georgia, serif;
+  font-family: "Century Gothic", "Trebuchet MS", Arial, sans-serif;
+  letter-spacing: -0.025em;
   line-height: 1.12;
 }
 

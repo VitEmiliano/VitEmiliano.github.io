@@ -59,6 +59,7 @@
       <div>
         <p class="sumario__sobretitulo">Tempos Perturbados</p>
         <div class="seletor-pagina" aria-label="Selecionar página">
+          <button type="button" data-destino="inicio">Página Inicial</button>
           <button type="button" data-destino="missoes">Missões</button>
           <button type="button" data-destino="diario">Diário dos Heróis</button>
         </div>
@@ -225,6 +226,16 @@
       <div class="confirmacao-navegacao__acoes">
         <button value="cancel">Permanecer aqui</button>
         <button class="confirmacao-navegacao__confirmar" value="confirm">Ir para a sessão</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="confirmacao-navegacao" id="confirmacao-personagem">
+    <form method="dialog">
+      <p id="confirmacao-personagem-texto"></p>
+      <div class="confirmacao-navegacao__acoes">
+        <button value="cancel">Cancelar</button>
+        <button class="confirmacao-navegacao__confirmar" value="confirm">Prosseguir</button>
       </div>
     </form>
   </dialog>

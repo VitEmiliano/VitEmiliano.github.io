@@ -35,6 +35,8 @@ const elementos = {
   mensagemErroTexto: document.querySelector("#mensagem-erro-texto"),
   confirmacao: document.querySelector("#confirmacao-navegacao"),
   confirmacaoTexto: document.querySelector("#confirmacao-navegacao-texto"),
+  confirmacaoPersonagem: document.querySelector("#confirmacao-personagem"),
+  confirmacaoPersonagemTexto: document.querySelector("#confirmacao-personagem-texto"),
 };
 
 const estado = {
@@ -219,16 +221,21 @@ function missaoValida(missao) {
 }
 
 function selecionarPagina(destino, atualizarUrl = true) {
-  if (!["diario", "missoes"].includes(destino)) {
+  if (!["inicio", "diario", "missoes"].includes(destino)) {
     return;
   }
 
+  const paginaInicial = destino === "inicio";
   estado.paginaAtual = destino;
-  elementos.portalInicial.hidden = true;
-  elementos.sumario.hidden = false;
+  elementos.portalInicial.hidden = !paginaInicial;
+  elementos.sumario.hidden = paginaInicial;
   elementos.paginaDiario.hidden = destino !== "diario";
   elementos.paginaMissoes.hidden = destino !== "missoes";
-  document.body.dataset.pagina = destino;
+  if (paginaInicial) {
+    delete document.body.dataset.pagina;
+  } else {
+    document.body.dataset.pagina = destino;
+  }
 
   elementos.botoesDestino.forEach((botao) => {
     const ativo = botao.dataset.destino === destino;
@@ -243,16 +250,22 @@ function selecionarPagina(destino, atualizarUrl = true) {
   document.querySelector(".pesquisa--diario").hidden = destino !== "diario";
   document.querySelector(".lista-entradas--diario").hidden = destino !== "diario";
   elementos.listaMissoes.hidden = destino !== "missoes";
-  elementos.quantidadeEntradas.textContent = destino === "diario"
-    ? `${estado.sessoes.length} ${estado.sessoes.length === 1 ? "registro" : "registros"}`
-    : `${estado.missoes.length} ${estado.missoes.length === 1 ? "missão" : "missões"}`;
+  if (destino === "diario") {
+    elementos.quantidadeEntradas.textContent =
+      `${estado.sessoes.length} ${estado.sessoes.length === 1 ? "registro" : "registros"}`;
+  } else if (destino === "missoes") {
+    elementos.quantidadeEntradas.textContent =
+      `${estado.missoes.length} ${estado.missoes.length === 1 ? "missão" : "missões"}`;
+  }
 
   fecharSumarioMobile();
 
   if (!atualizarUrl) {
     return;
   }
-  if (destino === "diario" && estado.indiceAtual >= 0) {
+  if (paginaInicial) {
+    history.replaceState(null, "", `${location.pathname}${location.search}`);
+  } else if (destino === "diario" && estado.indiceAtual >= 0) {
     atualizarHash(estado.sessoes[estado.indiceAtual].id);
   } else if (destino === "missoes" && estado.missaoAtual) {
     atualizarHashMissao(estado.missaoAtual);
@@ -307,17 +320,36 @@ function renderizarMissoes() {
   });
 
   const fragmento = document.createDocumentFragment();
-  nomesDosGrupos.forEach((nome) => {
+  nomesDosGrupos.forEach((nome, indiceGrupo) => {
     const secao = document.createElement("section");
     secao.className = "grupo-missoes";
 
+    const grupoGeral = normalizarTexto(nome) === "grupo";
+
     const titulo = document.createElement("h2");
-    titulo.textContent = nome;
+    const alternador = document.createElement("button");
+    const idLista = `missoes-grupo-${indiceGrupo}`;
+    alternador.type = "button";
+    alternador.className = "grupo-missoes__alternador";
+    alternador.textContent = nome;
+    alternador.setAttribute("aria-controls", idLista);
+    alternador.setAttribute("aria-expanded", String(grupoGeral));
+    if (grupoGeral) {
+      alternador.classList.add("is-always-open");
+      alternador.setAttribute("aria-label", `${nome}, missões sempre visíveis`);
+      alternador.disabled = true;
+    }
+    titulo.appendChild(alternador);
     secao.appendChild(titulo);
 
     const lista = document.createElement("ul");
+    lista.id = idLista;
+    lista.hidden = !grupoGeral;
     grupos.get(nome)
-      .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"))
+      .sort((a, b) =>
+        Number(a.status === "Concluída") - Number(b.status === "Concluída") ||
+        a.titulo.localeCompare(b.titulo, "pt-BR")
+      )
       .forEach((missao) => {
         const item = document.createElement("li");
         item.className = "missao-sumario";
@@ -339,6 +371,24 @@ function renderizarMissoes() {
       });
 
     secao.appendChild(lista);
+
+    if (!grupoGeral) {
+      alternador.addEventListener("click", async () => {
+        const estaAberto = alternador.getAttribute("aria-expanded") === "true";
+        if (estaAberto) {
+          lista.hidden = true;
+          alternador.setAttribute("aria-expanded", "false");
+          return;
+        }
+
+        const confirmou = await confirmarRevelacaoPersonagem(nome);
+        if (confirmou) {
+          lista.hidden = false;
+          alternador.setAttribute("aria-expanded", "true");
+        }
+      });
+    }
+
     fragmento.appendChild(secao);
   });
 
@@ -431,6 +481,26 @@ function confirmarNavegacao(titulo) {
       { once: true }
     );
     elementos.confirmacao.showModal();
+  });
+}
+
+function confirmarRevelacaoPersonagem(nome) {
+  elementos.confirmacaoPersonagemTexto.textContent =
+    `Você revelará missões do personagem ${nome}`;
+
+  if (typeof elementos.confirmacaoPersonagem.showModal !== "function") {
+    return Promise.resolve(
+      window.confirm(elementos.confirmacaoPersonagemTexto.textContent)
+    );
+  }
+
+  return new Promise((resolver) => {
+    elementos.confirmacaoPersonagem.addEventListener(
+      "close",
+      () => resolver(elementos.confirmacaoPersonagem.returnValue === "confirm"),
+      { once: true }
+    );
+    elementos.confirmacaoPersonagem.showModal();
   });
 }
 
