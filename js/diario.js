@@ -1133,7 +1133,6 @@ function converterMarkdown(markdown) {
   const linhas = markdown.split("\n");
   const saida = [];
   let paragrafo = [];
-  let listaAtual = null;
   let itensLista = [];
   let citacao = [];
 
@@ -1149,19 +1148,13 @@ function converterMarkdown(markdown) {
   };
 
   const descarregarLista = () => {
-    if (!listaAtual || !itensLista.length) {
-      listaAtual = null;
+    if (!itensLista.length) {
       itensLista = [];
       return;
     }
 
-    saida.push(
-      `<${listaAtual}>${itensLista
-        .map((item) => `<li>${converterInline(item)}</li>`)
-        .join("")}</${listaAtual}>`
-    );
+    saida.push(converterListaMarkdown(itensLista));
 
-    listaAtual = null;
     itensLista = [];
   };
 
@@ -1204,20 +1197,17 @@ function converterMarkdown(markdown) {
       continue;
     }
 
-    const itemNaoOrdenado = linha.match(/^\s*[-+*]\s+(.+)$/);
-    const itemOrdenado = linha.match(/^\s*\d+[.)]\s+(.+)$/);
+    const itemLista = linha.match(/^(\s*)([-+*]|\d+[.)])\s+(.+)$/);
 
-    if (itemNaoOrdenado || itemOrdenado) {
+    if (itemLista) {
       descarregarParagrafo();
       descarregarCitacao();
 
-      const tipo = itemOrdenado ? "ol" : "ul";
-      if (listaAtual && listaAtual !== tipo) {
-        descarregarLista();
-      }
-
-      listaAtual = tipo;
-      itensLista.push((itemOrdenado || itemNaoOrdenado)[1]);
+      itensLista.push({
+        recuo: medirRecuo(itemLista[1]),
+        tipo: /^\d/.test(itemLista[2]) ? "ol" : "ul",
+        conteudo: itemLista[3],
+      });
       continue;
     }
 
@@ -1236,6 +1226,56 @@ function converterMarkdown(markdown) {
 
   descarregarTudo();
   return saida.join("");
+}
+
+function medirRecuo(espacos) {
+  let coluna = 0;
+
+  for (const caractere of espacos) {
+    coluna += caractere === "\t" ? 4 - (coluna % 4) : 1;
+  }
+
+  return coluna;
+}
+
+function converterListaMarkdown(itens) {
+  const raizes = [];
+  const pilha = [];
+
+  itens.forEach((item) => {
+    const no = { ...item, filhos: [] };
+
+    while (pilha.length && pilha[pilha.length - 1].recuo >= no.recuo) {
+      pilha.pop();
+    }
+
+    const pai = pilha[pilha.length - 1]?.no;
+    (pai ? pai.filhos : raizes).push(no);
+    pilha.push({ recuo: no.recuo, no });
+  });
+
+  return renderizarListas(raizes);
+}
+
+function renderizarListas(itens) {
+  let html = "";
+
+  for (let indice = 0; indice < itens.length;) {
+    const tipo = itens[indice].tipo;
+    const grupo = [];
+
+    while (indice < itens.length && itens[indice].tipo === tipo) {
+      grupo.push(itens[indice]);
+      indice += 1;
+    }
+
+    html += `<${tipo}>${grupo.map((item) => {
+      const filhos = item.filhos.length ? renderizarListas(item.filhos) : "";
+      return `<li>${converterInline(item.conteudo)}${filhos}</li>`;
+    }).join("")}</${tipo}>`;
+  }
+
+  return html;
 }
 
 function converterInline(texto) {
