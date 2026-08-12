@@ -1,10 +1,10 @@
 {
   "versao": 2,
-  "total": 13,
-  "total_sessoes": 13,
+  "total": 14,
+  "total_sessoes": 14,
   "total_missoes": 17,
   "primeira_sessao": "2026-02-24",
-  "ultima_sessao": "2026-07-28",
+  "ultima_sessao": "2026-08-11",
   "sessoes": [
     {
       "id": "2026-02-24-uma-nova-manha",
@@ -96,6 +96,13 @@
       "titulo": "A verdade sobre Kaede",
       "arquivo": "conteudo/sessoes/Diário - 2026-07-28 - A verdade sobre Kaede.md",
       "origem_relativa": "2026-07-28 - A verdade sobre Kaede.md"
+    },
+    {
+      "id": "2026-08-11-entre-o-abismo-e-o-coliseu",
+      "data": "2026-08-11",
+      "titulo": "Entre o Abismo e o Coliseu",
+      "arquivo": "conteudo/sessoes/Diário - 2026-08-11 - Entre o Abismo e o Coliseu.md",
+      "origem_relativa": "2026-08-11 - Entre o Abismo e o Coliseu.md"
     }
   ],
   "missoes": [
