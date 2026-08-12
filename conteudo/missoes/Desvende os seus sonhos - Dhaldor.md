@@ -54,3 +54,6 @@ O ambiente é o mesmo dos outros sonhos, e o cheiro de enxofre somado ao céu si
 Ela está ajoelhada na frente de uma fogueira com uma katana em seu colo, e sua sensação de cansaço não mudou desde os últimos sonhos.
 — _Se você não me interrompesse eu já teria falado_ - a mulher-gato responde bufando. - _Nós estamos no Abi-_
 "Claro que eu acordei agora", você pensa enquanto abre os olhos.
+
+## Conclusão
+Você declarou ter finalmente compreendido o significado das visões e associou o local observado nos sonhos ao Abismo e a Bastet, utilizando essa conclusão para indicar o possível paradeiro de Kaede. ([2026-08-11 - Entre o Abismo e o Coliseu](../sessoes/Di%C3%A1rio%20-%202026-08-11%20-%20Entre%20o%20Abismo%20e%20o%20Coliseu.md))
