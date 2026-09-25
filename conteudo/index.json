@@ -2,7 +2,7 @@
   "versao": 2,
   "total": 14,
   "total_sessoes": 14,
-  "total_missoes": 17,
+  "total_missoes": 18,
   "primeira_sessao": "2026-02-24",
   "ultima_sessao": "2026-08-11",
   "sessoes": [
@@ -127,6 +127,16 @@
       ]
     },
     {
+      "id": "capturem-shar-no-monte-da-lua-cheia",
+      "titulo": "Capturem Shar no Monte da Lua Cheia",
+      "arquivo": "conteudo/missoes/Capturem Shar no Monte da Lua Cheia.md",
+      "origem_relativa": "Missões Concluídas/Capturem Shar no Monte da Lua Cheia.md",
+      "status": "Concluída",
+      "acesso": [
+        "Grupo"
+      ]
+    },
+    {
       "id": "choque-o-ovo-malaugrym",
       "titulo": "Choque o ovo Malaugrym",
       "arquivo": "conteudo/missoes/Choque o ovo Malaugrym.md",
@@ -190,7 +200,7 @@
       "id": "desvende-os-seus-sonhos-dhaldor",
       "titulo": "Desvende os seus sonhos - Dhaldor",
       "arquivo": "conteudo/missoes/Desvende os seus sonhos - Dhaldor.md",
-      "origem_relativa": "Missões Ativas/Desvende os seus sonhos - Dhaldor.md",
+      "origem_relativa": "Missões Concluídas/Desvende os seus sonhos - Dhaldor.md",
       "status": "Concluída",
       "acesso": [
         "Dhaldor Torunn"
