@@ -1,10 +1,10 @@
 {
   "versao": 2,
-  "total": 14,
-  "total_sessoes": 14,
+  "total": 15,
+  "total_sessoes": 15,
   "total_missoes": 18,
   "primeira_sessao": "2026-02-24",
-  "ultima_sessao": "2026-08-11",
+  "ultima_sessao": "2026-08-25",
   "sessoes": [
     {
       "id": "2026-02-24-uma-nova-manha",
@@ -103,6 +103,13 @@
       "titulo": "Entre o Abismo e o Coliseu",
       "arquivo": "conteudo/sessoes/Diário - 2026-08-11 - Entre o Abismo e o Coliseu.md",
       "origem_relativa": "2026-08-11 - Entre o Abismo e o Coliseu.md"
+    },
+    {
+      "id": "2026-08-25-a-prova-do-labirinto",
+      "data": "2026-08-25",
+      "titulo": "A Prova do Labirinto",
+      "arquivo": "conteudo/sessoes/Diário - 2026-08-25 e 2026-09-09 - A Prova do Labirinto.md",
+      "origem_relativa": "2026-08-25 e 2026-09-09 - A Prova do Labirinto.md"
     }
   ],
   "missoes": [
