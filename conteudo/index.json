@@ -1,10 +1,10 @@
 {
   "versao": 2,
-  "total": 15,
-  "total_sessoes": 15,
+  "total": 16,
+  "total_sessoes": 16,
   "total_missoes": 18,
   "primeira_sessao": "2026-02-24",
-  "ultima_sessao": "2026-08-25",
+  "ultima_sessao": "2026-09-25",
   "sessoes": [
     {
       "id": "2026-02-24-uma-nova-manha",
@@ -110,6 +110,13 @@
       "titulo": "A Prova do Labirinto",
       "arquivo": "conteudo/sessoes/Diário - 2026-08-25 e 2026-09-09 - A Prova do Labirinto.md",
       "origem_relativa": "2026-08-25 e 2026-09-09 - A Prova do Labirinto.md"
+    },
+    {
+      "id": "2026-09-25-arena-de-batalha",
+      "data": "2026-09-25",
+      "titulo": "Arena de Batalha",
+      "arquivo": "conteudo/sessoes/Diário - 2026-09-25 - Arena de Batalha.md",
+      "origem_relativa": "2026-09-25 - Arena de Batalha.md"
     }
   ],
   "missoes": [
@@ -257,8 +264,8 @@
       "id": "provem-seu-valor-no-coliseu-de-thultanthar",
       "titulo": "Provem seu valor no Coliseu de Thultanthar",
       "arquivo": "conteudo/missoes/Provem seu valor no Coliseu de Thultanthar.md",
-      "origem_relativa": "Missões Ativas/Provem seu valor no Coliseu de Thultanthar.md",
-      "status": "Ativa",
+      "origem_relativa": "Missões Concluídas/Provem seu valor no Coliseu de Thultanthar.md",
+      "status": "Concluída",
       "acesso": [
         "Grupo"
       ]
