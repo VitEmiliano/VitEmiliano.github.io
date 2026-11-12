@@ -3,243 +3,96 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#24160f">
-  <meta
-    name="description"
-    content="Missões e diário dos heróis da campanha Tempos Perturbados."
-  >
-  <title>Tempos Perturbados — Missões e Diário dos Heróis</title>
-  <link rel="stylesheet" href="./css/estilo.css">
+  <meta name="description" content="Sorteie ou reveja seu amigo secreto.">
+  <meta name="theme-color" content="#103b32">
+  <title>Amigo secreto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./amigo-secreto.css">
+  <script type="module" src="./amigo-secreto.js"></script>
 </head>
-
 <body>
-  <noscript>
-    <div class="aviso-sem-script">
-      Este diário precisa de JavaScript habilitado para carregar as entradas.
-    </div>
-  </noscript>
-
-  <main class="portal-inicial" id="portal-inicial">
-    <div class="portal-inicial__painel">
-      <p class="portal-inicial__sobretitulo">Crônicas da campanha</p>
-      <h1>Tempos Perturbados</h1>
-      <p class="portal-inicial__convite">Que parte da jornada deseja consultar?</p>
-
-      <div class="portal-inicial__opcoes">
-        <button class="cartao-destino" type="button" data-destino="missoes">
-          <span class="cartao-destino__icone icone-missoes" aria-hidden="true">
-            <span>!</span>
-          </span>
-          <strong>Missões</strong>
-          <small>Consulte objetivos ativos e feitos já concluídos.</small>
-        </button>
-
-        <button class="cartao-destino" type="button" data-destino="diario">
-          <span class="cartao-destino__icone icone-diario" aria-hidden="true">▤</span>
-          <strong>Diário dos Heróis</strong>
-          <small>Reviva as sessões registradas pelos aventureiros.</small>
-        </button>
+  <main class="layout">
+    <section class="cover" aria-labelledby="title">
+      <span class="emblem" aria-hidden="true"><i class="gift-icon"></i></span>
+      <h1 id="title">Amigo<br><em>secreto</em></h1>
+      <div class="illustration" aria-hidden="true">
+        <i class="orbit orbit-one"></i><i class="orbit orbit-two"></i>
+        <i class="spark spark-one">✦</i><i class="spark spark-two">✦</i>
+        <i class="spark spark-three">✦</i><i class="spark spark-four">✦</i>
+        <div class="parcel parcel-salmon"><i class="bow"></i><i class="lid"></i></div>
+        <div class="parcel parcel-cream"><i class="bow"></i><i class="lid"></i></div>
+        <div class="parcel parcel-gold"><i class="bow"></i><i class="lid"></i></div>
       </div>
-    </div>
-  </main>
+      <p class="participant-count">15 participantes</p>
+    </section>
 
-  <button
-    class="botao-menu"
-    id="botao-menu"
-    type="button"
-    aria-label="Abrir sumário"
-    aria-controls="sumario"
-    aria-expanded="false"
-  >
-    ☰
-  </button>
-
-  <aside class="sumario" id="sumario" aria-label="Navegação da campanha" hidden>
-    <div class="sumario__cabecalho">
-      <div>
-        <p class="sumario__sobretitulo">Tempos Perturbados</p>
-        <div class="seletor-pagina" aria-label="Selecionar página">
-          <button type="button" data-destino="inicio">Página Inicial</button>
-          <button type="button" data-destino="missoes">Missões</button>
-          <button type="button" data-destino="diario">Diário dos Heróis</button>
-        </div>
-      </div>
-
-      <button
-        class="sumario__fechar"
-        id="sumario-fechar"
-        type="button"
-        aria-label="Fechar sumário"
-      >
-        ×
-      </button>
-    </div>
-
-    <label class="pesquisa pesquisa--diario" for="pesquisa-entradas">
-      <span>Pesquisar entradas</span>
-      <input
-        id="pesquisa-entradas"
-        type="search"
-        placeholder="Data ou título..."
-        autocomplete="off"
-      >
-    </label>
-
-    <nav class="lista-entradas lista-entradas--diario" aria-label="Entradas do diário">
-      <ol id="lista-entradas"></ol>
-      <p class="lista-vazia" id="lista-vazia" hidden>
-        Nenhuma entrada encontrada.
-      </p>
-    </nav>
-
-    <nav class="lista-missoes" id="lista-missoes" aria-label="Missões" hidden></nav>
-
-    <footer class="sumario__rodape">
-      <span id="quantidade-entradas">Carregando registros...</span>
-    </footer>
-  </aside>
-
-  <div class="fundo-sumario" id="fundo-sumario" hidden></div>
-
-  <main class="palco" id="pagina-diario" hidden>
-    <header class="barra-superior">
-      <div>
-        <p class="barra-superior__rotulo">Crônicas da campanha</p>
-        <h2 id="titulo-atual">O diário permanece fechado</h2>
-      </div>
-
-      <button
-        class="botao-download"
-        id="botao-download"
-        type="button"
-        disabled
-      >
-        <span aria-hidden="true">⇩</span>
-        Baixar página
-      </button>
-    </header>
-
-    <section class="leitor" aria-label="Leitor do diário">
-      <button
-        class="seta seta--esquerda"
-        id="seta-esquerda"
-        type="button"
-        aria-label="Voltar página"
-        disabled
-      >
-        <span aria-hidden="true">‹</span>
-      </button>
-
-      <div class="livro-area">
-        <div
-          class="livro"
-          id="livro"
-          aria-live="polite"
-          aria-label="Diário fechado"
-        >
-          <div class="livro__miolo" aria-hidden="true"></div>
-
-          <div class="abertura">
-            <div class="pagina-fisica pagina-fisica--esquerda"></div>
-            <div class="pagina-fisica pagina-fisica--direita"></div>
-
-            <div class="cabecalho-pagina cabecalho-pagina--esquerda">
-              <span id="cabecalho-esquerdo"></span>
-            </div>
-
-            <div class="cabecalho-pagina cabecalho-pagina--direita">
-              <span id="cabecalho-direito"></span>
-            </div>
-
-            <article class="conteudo-pagina" id="conteudo-pagina"></article>
-
-            <div class="vinco-central" aria-hidden="true"></div>
-            <div class="folha-animada" aria-hidden="true"></div>
-          </div>
-
-          <button
-            class="capa"
-            id="capa"
-            type="button"
-            aria-label="Abrir o diário"
-          >
-            <div class="capa__moldura">
-              <p class="capa__campanha">Tempos Perturbados</p>
-              <h2>Diário<br>dos Heróis</h2>
-              <div class="capa__ornamento" aria-hidden="true">✦</div>
-              <p class="capa__instrucao">Use a seta à direita para abrir</p>
-            </div>
+    <section class="panel" aria-label="Acesso ao sorteio">
+      <div class="panel-content">
+        <form id="entry">
+          <h2>Quem está acessando?</h2>
+          <p class="description">Selecione seu nome para sortear ou rever seu amigo secreto.</p>
+          <label for="name">Seu nome</label>
+          <select id="name" name="name" required>
+            <option value="">Selecione seu nome</option>
+            <option>Nemesis</option><option>Ney</option><option>Jecely</option>
+            <option>Gustavo</option><option>Chris</option><option>Tarcizio</option>
+            <option>Hevellyn</option><option>Dani</option><option>Lari</option>
+            <option>Vítor</option><option>Taiane</option><option>Ju</option>
+            <option>Di</option><option>Guilherme</option><option>Henrique</option>
+          </select>
+          <button type="submit" class="primary" id="retry" hidden>
+            Tentar novamente <span aria-hidden="true">→</span>
           </button>
-        </div>
+        </form>
 
-        <div class="estado-leitura" role="status" aria-live="polite">
-          <span id="estado-texto">Preparando o diário...</span>
-          <span id="indicador-pagina"></span>
-        </div>
+        <form id="login" hidden>
+          <h2>Acesso de administrador</h2>
+          <p class="description" id="login-description"></p>
+          <label for="password">Senha</label>
+          <input id="password" type="password" autocomplete="current-password" maxlength="200" required>
+          <button type="submit" class="primary">Entrar <span aria-hidden="true">→</span></button>
+          <button type="button" class="back">Voltar</button>
+        </form>
+
+        <form id="admin" hidden>
+          <h2>Escolha seu amigo secreto</h2>
+          <p class="description">Selecione um dos nomes disponíveis.</p>
+          <label for="choice">Amigo secreto</label>
+          <select id="choice" required></select>
+          <button type="submit" class="primary" id="choose" disabled>
+            Confirmar escolha <span aria-hidden="true">→</span>
+          </button>
+          <button type="button" class="back">Voltar</button>
+        </form>
+
+        <p id="error" class="message error" role="alert" hidden></p>
+        <p id="status" class="message" role="status" hidden></p>
+        <noscript><p class="message error">Ative o JavaScript para usar o sorteio.</p></noscript>
       </div>
-
-      <button
-        class="seta seta--direita"
-        id="seta-direita"
-        type="button"
-        aria-label="Avançar página"
-        disabled
-      >
-        <span aria-hidden="true">›</span>
-      </button>
-    </section>
-
-    <p class="atalhos">
-      Use as teclas <kbd>←</kbd> e <kbd>→</kbd> para navegar.
-      <kbd>Esc</kbd> fecha o diário.
-    </p>
-  </main>
-
-  <main class="palco palco--missoes" id="pagina-missoes" hidden>
-    <header class="barra-superior barra-superior--missoes">
-      <div>
-        <p class="barra-superior__rotulo">Quadro de objetivos</p>
-        <h2 id="titulo-missao">Escolha uma missão no painel</h2>
-      </div>
-    </header>
-
-    <section class="papiro" aria-label="Detalhes da missão">
-      <div class="papiro__rolo papiro__rolo--superior" aria-hidden="true"></div>
-      <article class="papiro__conteudo" id="conteudo-missao">
-        <div class="papiro__vazio">
-          <span aria-hidden="true">✦</span>
-          <p>Selecione uma missão para abrir o pergaminho.</p>
-        </div>
-      </article>
-      <div class="papiro__rolo papiro__rolo--inferior" aria-hidden="true"></div>
+      <p class="panel-footer"><span aria-hidden="true">✧</span> Seu resultado fica salvo para a próxima visita.</p>
     </section>
   </main>
 
-  <div class="mensagem-erro" id="mensagem-erro" role="alert" hidden>
-    <strong>Não foi possível carregar o diário.</strong>
-    <span id="mensagem-erro-texto"></span>
-  </div>
-
-  <dialog class="confirmacao-navegacao" id="confirmacao-navegacao">
+  <dialog id="confirmation" aria-labelledby="confirmation-title">
     <form method="dialog">
-      <p id="confirmacao-navegacao-texto"></p>
-      <div class="confirmacao-navegacao__acoes">
-        <button value="cancel">Permanecer aqui</button>
-        <button class="confirmacao-navegacao__confirmar" value="confirm">Ir para a sessão</button>
+      <h2 id="confirmation-title">Confirmar acesso</h2>
+      <p id="confirmation-text"></p>
+      <div class="dialog-actions">
+        <button class="secondary" value="cancel" autofocus>Cancelar</button>
+        <button class="primary" value="confirm">Prosseguir</button>
       </div>
     </form>
   </dialog>
 
-  <dialog class="confirmacao-navegacao" id="confirmacao-personagem">
+  <dialog id="result" class="result" aria-labelledby="result-title">
     <form method="dialog">
-      <p id="confirmacao-personagem-texto"></p>
-      <div class="confirmacao-navegacao__acoes">
-        <button value="cancel">Cancelar</button>
-        <button class="confirmacao-navegacao__confirmar" value="confirm">Prosseguir</button>
-      </div>
+      <span class="emblem" aria-hidden="true"><i class="gift-icon"></i></span>
+      <h2 id="result-title">Seu amigo secreto é</h2>
+      <p id="result-name"></p>
+      <button class="primary" autofocus>Fechar</button>
     </form>
   </dialog>
-
-  <script src="./js/diario.js" defer></script>
 </body>
 </html>
